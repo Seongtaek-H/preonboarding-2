@@ -31,8 +31,8 @@ export default function Borad({
   };
 
   const dragOverStatus = (e: React.DragEvent<HTMLDivElement>, item: string) => {
+    e.preventDefault();
     dropPointStatus.current = item;
-    console.log(item);
   };
 
   const dragOverOrderNumber = (
@@ -47,7 +47,9 @@ export default function Borad({
     const copy = {
       ...dragedItem.current!,
       orderNumber: dropPointOrderNumber.current
-        ? dropPointOrderNumber.current - 1
+        ? dragedItem.current!.orderNumber > dropPointOrderNumber.current
+          ? dropPointOrderNumber.current - 1
+          : dropPointOrderNumber.current + 1
         : dragedItem.current!.orderNumber,
       status: dropPointStatus.current!,
     };
@@ -64,6 +66,7 @@ export default function Borad({
             key={item}
             onDragEnter={(e) => dragOverStatus(e, item)}
             onDragOver={(e) => dragOverStatus(e, item)}
+            onDrop={(e) => drop()}
           >
             <p>{item}</p>
             {issueList[0] !== null &&
@@ -77,7 +80,7 @@ export default function Borad({
                   draggable={true}
                   onDragStart={() => dragStart(issue)}
                   onDragOver={(e) => dragOverOrderNumber(e, issue.orderNumber)}
-                  onDrop={() => drop()}
+                  onDrop={(e) => drop()}
                 >
                   <Issue prop={issue} />
                 </IssueContainer>
