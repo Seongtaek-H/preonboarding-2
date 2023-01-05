@@ -25,6 +25,7 @@ export default function IssueForm({
     createIssue(createIssueData);
     setIssueList([...issueList, createIssueData]);
   };
+
   return (
     <div>
       <button onClick={() => setNewIssue(false)}>닫기</button>

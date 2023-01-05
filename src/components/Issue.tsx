@@ -1,26 +1,28 @@
 import React, { useState } from 'react';
-import { SetterOrUpdater } from 'recoil';
+import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
 import { deleteIssue, getAllIssueData } from '../api/localstorage';
+import { issueData } from '../recoil/atom';
 import { IssueDataType } from '../type/type';
-import IssueDetail from './IssueDetail';
 
-export default function Issue({
-  prop,
-  setIssueList,
-}: {
-  prop: IssueDataType;
-  setIssueList: SetterOrUpdater<IssueDataType[]>;
-}) {
+export default function Issue({ prop }: { prop: IssueDataType }) {
   const { title, content, responsibility, date, status, uniqNumber } = prop;
+  const [issueList, setIssueList] = useRecoilState<IssueDataType[]>(issueData);
 
+  const deleteIssueData = () => {
+    deleteIssue(uniqNumber);
+    const res = getAllIssueData();
+    if (res[0]) {
+      setIssueList(res);
+    } else {
+      setIssueList([]);
+    }
+  };
   return (
-    <IssueContainer>
+    <div>
       <button
         onClick={() => {
-          deleteIssue(uniqNumber);
-          const res = getAllIssueData();
-          setIssueList(() => res);
+          deleteIssueData();
         }}
       >
         삭제
@@ -30,16 +32,6 @@ export default function Issue({
         <p>{responsibility}</p>
         <p>{date}</p>
       </div>
-    </IssueContainer>
+    </div>
   );
 }
-
-const IssueContainer = styled.div`
-  width: 200px;
-  height: 100px;
-  background-color: beige;
-  border: 1px solid black;
-  p {
-    margin: 0;
-  }
-`;
